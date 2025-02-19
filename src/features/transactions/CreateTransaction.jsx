@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createTransaction } from "./transactionsSlice";
 
@@ -9,14 +9,32 @@ const CreateTransaction = () => {
   const dispatch = useDispatch();
   const { loading, error } = useSelector((state) => state.transactions);
 
+  // const handleCreateTransaction = async (e) => {
+  //   e.preventDefault();
+  //   await dispatch(createTransaction({ amount, receiver, narration }));
+  //   if (!error) {
+  //     setAmount(0);
+  //     setReceiver("");
+  //     setNarration("");
+  //     alert("Transaction successful!");
+  //   }
+  // };
+  
   const handleCreateTransaction = async (e) => {
     e.preventDefault();
-    await dispatch(createTransaction({ amount, receiver, narration }));
-    if (!error) {
+  
+    try {
+      // `unwrap()` ensures we catch any errors thrown inside the async thunk
+      await dispatch(createTransaction({ amount, receiver, narration })).unwrap();
+  
+      // If the transaction is successful, reset fields
       setAmount(0);
       setReceiver("");
       setNarration("");
       alert("Transaction successful!");
+    } catch (err) {
+      // Show error message when the transaction fails
+      alert(`Transaction failed`);
     }
   };
 
